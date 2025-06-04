@@ -1,35 +1,101 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { Layout, Menu } from "antd";
+import { ShopOutlined, AppstoreOutlined } from "@ant-design/icons";
+import Brands from "./components/Brands";
+import Products from "./components/Products";
+import ProductDetail from "./components/ProductDetail";
+import "./App.css";
+
+const { Header, Content, Sider } = Layout;
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [selectedBrand, setSelectedBrand] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [currentView, setCurrentView] = useState("brands");
+
+  const handleBrandSelect = (brand) => {
+    setSelectedBrand(brand);
+    setSelectedProduct(null);
+    setCurrentView("products");
+  };
+
+  const handleProductSelect = (product) => {
+    setSelectedProduct(product);
+    setCurrentView("productDetail");
+  };
+
+  const renderContent = () => {
+    switch (currentView) {
+      case "brands":
+        return <Brands onBrandSelect={handleBrandSelect} />;
+      case "products":
+        return (
+          <Products
+            brand={selectedBrand}
+            onProductSelect={handleProductSelect}
+          />
+        );
+      case "productDetail":
+        return <ProductDetail product={selectedProduct} />;
+      default:
+        return <Brands onBrandSelect={handleBrandSelect} />;
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Layout style={{ minHeight: "100vh" }}>
+      <Header style={{ padding: 0, background: "#fff" }}>
+        <div
+          style={{ padding: "0 24px", fontSize: "20px", fontWeight: "bold" }}
+        >
+          Brand & Product Catalog
+        </div>
+      </Header>
+      <Layout>
+        <Sider width={200} style={{ background: "#fff" }}>
+          <Menu
+            mode="inline"
+            selectedKeys={[currentView]}
+            style={{ height: "100%", borderRight: 0 }}
+            items={[
+              {
+                key: "brands",
+                icon: <ShopOutlined />,
+                label: "Brands",
+                onClick: () => {
+                  setCurrentView("brands");
+                  setSelectedBrand(null);
+                  setSelectedProduct(null);
+                },
+              },
+              {
+                key: "products",
+                icon: <AppstoreOutlined />,
+                label: "Products",
+                disabled: !selectedBrand,
+                onClick: () => {
+                  setCurrentView("products");
+                  setSelectedProduct(null);
+                },
+              },
+            ]}
+          />
+        </Sider>
+        <Layout style={{ padding: "24px" }}>
+          <Content
+            style={{
+              background: "#fff",
+              padding: 24,
+              margin: 0,
+              minHeight: 280,
+            }}
+          >
+            {renderContent()}
+          </Content>
+        </Layout>
+      </Layout>
+    </Layout>
+  );
 }
 
-export default App
+export default App;
