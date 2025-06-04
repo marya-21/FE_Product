@@ -4,7 +4,6 @@ import { ShopOutlined, AppstoreOutlined } from "@ant-design/icons";
 import Brands from "./components/Brands";
 import Products from "./components/Products";
 import ProductDetail from "./components/ProductDetail";
-import "./App.css";
 
 const { Header, Content, Sider } = Layout;
 
